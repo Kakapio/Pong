@@ -74,10 +74,12 @@ namespace Pong
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            //Allows game to be exited if ESC is pushed.
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
             // TODO: Add your update logic here
+            
 
             base.Update(gameTime);
         }
@@ -91,8 +93,8 @@ namespace Pong
             GraphicsDevice.Clear(Color.LightBlue);
 
             spriteBatch.Begin();
+            spriteBatch.Draw(midLine, destinationRectangle: new Rectangle(640, 0, 20, 720));
             spriteBatch.Draw(ball, Vector2.Zero);
-            spriteBatch.Draw(midLine, new Vector2 (640, 0));
             spriteBatch.End();
 
 
