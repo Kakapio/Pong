@@ -18,6 +18,8 @@ namespace Pong
         Texture2D player;
         Texture2D midLine;
 
+        Vector2 ballPosition = Vector2.Zero;
+
         public Game1()
         {
             //Default stuff.
@@ -94,10 +96,9 @@ namespace Pong
 
             spriteBatch.Begin();
             spriteBatch.Draw(midLine, destinationRectangle: new Rectangle(640, 0, 20, 720));
-            spriteBatch.Draw(ball, Vector2.Zero);
+            spriteBatch.Draw(ball, destinationRectangle: new Rectangle ((int)ballPosition.X, (int)ballPosition.Y, 70, 70));
             spriteBatch.End();
-
-
+            
             base.Draw(gameTime);
         }
     }
