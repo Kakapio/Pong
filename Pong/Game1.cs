@@ -18,7 +18,11 @@ namespace Pong
         Texture2D player;
         Texture2D midLine;
 
-        Vector2 ballPosition = Vector2.Zero;
+        //Variables pertaining to the ball's position and its motion.
+        Vector2 ballPosition = new Vector2 (640, 360);
+        Vector2 ballSpeed = new Vector2(150, 150);
+
+        Vector2 paddlePosition;
 
         public Game1()
         {
@@ -41,8 +45,14 @@ namespace Pong
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            IsMouseVisible = true;
 
             base.Initialize();
+
+            paddlePosition = new Vector2(graphics.GraphicsDevice.Viewport.Width / 2 - player.Width * 11,
+                                         graphics.GraphicsDevice.Viewport.Height - player.Height);
+
+            
         }
 
         /// <summary>
@@ -81,7 +91,33 @@ namespace Pong
                 Exit();
 
             // TODO: Add your update logic here
-            
+
+            //Move sprite by speed, scaled by elapsed time.
+            ballPosition += ballSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            int maxX = GraphicsDevice.Viewport.Width - ball.Width;
+            int maxY = GraphicsDevice.Viewport.Height - ball.Height;
+
+            //Check for bounce
+            if (ballPosition.X > maxX || ballPosition.X < 0)
+                ballSpeed.X *= -1;
+
+            if (ballPosition.Y > maxY || ballPosition.Y < 0)
+                ballSpeed.Y *= -1;
+            else if (ballPosition.X > maxX)
+            {
+                //Ball hit left/right of screen, reset ball.
+                ballPosition.Y = GraphicsDevice.Viewport.Height / 2;
+                ballPosition.X = GraphicsDevice.Viewport.Width / 2;
+                ballSpeed.X = 150;
+                ballSpeed.Y = 150;
+            }
+
+            KeyboardState keyState = Keyboard.GetState();
+            if (keyState.IsKeyDown(Keys.Down))
+                paddlePosition.Y += 5;
+            else if (keyState.IsKeyDown(Keys.Up))
+                paddlePosition.Y -= 5;
 
             base.Update(gameTime);
         }
@@ -97,6 +133,7 @@ namespace Pong
             spriteBatch.Begin();
             spriteBatch.Draw(midLine, destinationRectangle: new Rectangle(640, 0, 20, 720));
             spriteBatch.Draw(ball, destinationRectangle: new Rectangle ((int)ballPosition.X, (int)ballPosition.Y, 70, 70));
+            spriteBatch.Draw(player, paddlePosition);
             spriteBatch.End();
             
             base.Draw(gameTime);
