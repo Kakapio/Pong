@@ -15,14 +15,16 @@ namespace Pong
 
         //Variables for 2D sprites.
         Texture2D ball;
-        Texture2D player;
+        Texture2D player1;
+        Texture2D player2;
         Texture2D midLine;
 
         //Variables pertaining to the ball's position and its motion.
         Vector2 ballPosition = new Vector2 (640, 360);
         Vector2 ballSpeed = new Vector2(150, 150);
 
-        Vector2 paddlePosition;
+        Vector2 paddlePosition1;
+        Vector2 paddlePosition2;
 
         public Game1()
         {
@@ -49,11 +51,13 @@ namespace Pong
 
             base.Initialize();
 
-            paddlePosition = new Vector2(graphics.GraphicsDevice.Viewport.Width / 2 - player.Width * 11,
-                                         graphics.GraphicsDevice.Viewport.Height - player.Height);
+            paddlePosition1 = new Vector2(graphics.GraphicsDevice.Viewport.Width / 2 - player1.Width * 11,
+                                          graphics.GraphicsDevice.Viewport.Height - player1.Height);
+            paddlePosition2 = new Vector2(graphics.GraphicsDevice.Viewport.Width / 2 + player2.Width * 11,
+                                          graphics.GraphicsDevice.Viewport.Height - player2.Height);
 
-            
         }
+        
 
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
@@ -66,7 +70,8 @@ namespace Pong
 
             // TODO: use this.Content to load your game content here
             ball = this.Content.Load<Texture2D>("Ball");
-            player = this.Content.Load<Texture2D>("Player");
+            player1 = this.Content.Load<Texture2D>("Player");
+            player2 = this.Content.Load<Texture2D>("Player");
             midLine = this.Content.Load<Texture2D>("MidLine");
         }
 
@@ -90,13 +95,11 @@ namespace Pong
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
-
             //Move sprite by speed, scaled by elapsed time.
             ballPosition += ballSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            int maxX = GraphicsDevice.Viewport.Width - ball.Width;
-            int maxY = GraphicsDevice.Viewport.Height - ball.Height;
+            int maxX = GraphicsDevice.Viewport.Width - 47;
+            int maxY = GraphicsDevice.Viewport.Height - 47;
 
             //Check for bounce
             if (ballPosition.X > maxX || ballPosition.X < 0)
@@ -114,10 +117,17 @@ namespace Pong
             }
 
             KeyboardState keyState = Keyboard.GetState();
+            //If up arrow is pushed, go up. If down arrow is pushed, go down.
             if (keyState.IsKeyDown(Keys.Down))
-                paddlePosition.Y += 5;
+                paddlePosition2.Y += 5;
             else if (keyState.IsKeyDown(Keys.Up))
-                paddlePosition.Y -= 5;
+                paddlePosition2.Y -= 5;
+
+            //If W is pushed, go up. If S is pushed, go down.
+            if (keyState.IsKeyDown(Keys.S))
+                paddlePosition1.Y += 5;
+            else if (keyState.IsKeyDown(Keys.W))
+                paddlePosition1.Y -= 5;
 
             base.Update(gameTime);
         }
@@ -132,8 +142,9 @@ namespace Pong
 
             spriteBatch.Begin();
             spriteBatch.Draw(midLine, destinationRectangle: new Rectangle(640, 0, 20, 720));
-            spriteBatch.Draw(ball, destinationRectangle: new Rectangle ((int)ballPosition.X, (int)ballPosition.Y, 70, 70));
-            spriteBatch.Draw(player, paddlePosition);
+            spriteBatch.Draw(ball, destinationRectangle: new Rectangle ((int)ballPosition.X, (int)ballPosition.Y, 50, 50));
+            spriteBatch.Draw(player1, destinationRectangle: new Rectangle((int)paddlePosition1.X, (int)paddlePosition1.Y, 35, 200));
+            spriteBatch.Draw(player2, destinationRectangle: new Rectangle((int)paddlePosition2.X, (int)paddlePosition2.Y, 35, 200));
             spriteBatch.End();
             
             base.Draw(gameTime);
